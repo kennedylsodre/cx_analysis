@@ -1,0 +1,102 @@
+table _measures
+	lineageTag: b9c4e9ad-9bd4-43b1-ad97-620ab9f4cbb9
+
+	measure 'CSAT %' = ```
+			
+			VAR satisfeitos = 
+			    CALCULATE(
+			        DISTINCTCOUNT(f_tickets[ticket_id]), 
+			        f_tickets[fl_csat_percentual] = TRUE())
+			var total = CALCULATE(DISTINCTCOUNT(f_tickets[ticket_id]), f_tickets[fl_responded] = 1)
+			RETURN
+			DIVIDE(satisfeitos,total,0)
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 08e5bce1-8c69-4040-ab4f-3f6714654179
+
+	measure 'Taxa de resposta' =
+			
+			AVERAGE(f_tickets[fl_responded])
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: c8826601-3ad4-48b7-a296-92b6f9a52537
+
+	measure 'Nota Média CSTA' =
+			
+			CALCULATE(
+			    AVERAGE(f_tickets[csat_score])
+			    ,f_tickets[fl_responded] = 1)
+		lineageTag: a0e295aa-8547-41a6-a90a-bf4a086caec8
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Qtd. Tickets' =
+			
+			DISTINCTCOUNT(f_tickets[ticket_id])
+		formatString: #,0
+		lineageTag: 4d6703e4-2b44-4ec1-98aa-076f9bf5efaf
+
+	measure 'Tickets Escalados' = ```
+			
+			CALCULATE(
+			    DISTINCTCOUNT(f_tickets[ticket_id]) 
+			    ,f_tickets[escalated] = TRUE())
+			```
+		formatString: #,0
+		lineageTag: 25131ac7-ea92-46d9-907c-52802708a03c
+
+	measure 'Tickets Escalados %' =
+			
+			DIVIDE([Tickets Escalados],[Qtd. Tickets],0)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 2928bec0-71be-4b39-87a9-5ffcf53b315c
+
+	measure 'TMA Médio' =
+			
+			AVERAGE(f_tickets[tma_minutes])
+		lineageTag: 23881208-625b-4ee2-be65-47ab9cf83e26
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Qtd. Agents' =
+			
+			CALCULATE(DISTINCTCOUNT(f_tickets[agent_id]))
+		formatString: 0
+		lineageTag: 27a73a86-2eaa-47af-a143-8a2c4ab2e361
+
+	measure 'Tickets por agente por dia' =
+			
+			[Qtd. Tickets]/ [Qtd. Agents] / DISTINCTCOUNT(f_tickets[ticket_date])
+		lineageTag: bc172a16-c541-454c-b2a1-31c7858fb8bc
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Titulo gráfico' = ```
+			
+			var analise = MAX('Eixos de Análise'[Parâmetro]) 
+			var indicador = MAX('Indicadores Gráfico Menor'[Parâmetro]) 
+			RETURN
+			indicador & " por "&analise
+			```
+		lineageTag: 5b94013d-f4d8-46d7-8200-643349ffbdc0
+
+	measure 'Qualidade Média' =
+			
+			AVERAGE(f_quality[quality_score])
+		lineageTag: d59b2cd6-5c2e-4048-aa0b-8cf866d18a9a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition _measures = m
+		mode: import
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Coluna 1" = _t]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"Coluna 1", type text}}),
+				    #"Colunas Removidas" = Table.RemoveColumns(#"Tipo Alterado",{"Coluna 1"})
+				in
+				    #"Colunas Removidas"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

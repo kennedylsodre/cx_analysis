@@ -1,0 +1,83 @@
+table d_agents
+	lineageTag: ef3d95df-4533-4e3c-9222-d2b75b7e6fee
+
+	column agent_id
+		dataType: string
+		lineageTag: 313ce569-1636-4313-aba3-5d62d41a3f2a
+		summarizeBy: none
+		sourceColumn: agent_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column agent_name
+		dataType: string
+		lineageTag: f799f7c2-f485-4e6d-96c0-d49c72af6855
+		summarizeBy: none
+		sourceColumn: agent_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column agent_email
+		dataType: string
+		lineageTag: 1a24d74a-98be-454b-8ae5-3dab96bc921f
+		summarizeBy: none
+		sourceColumn: agent_email
+
+		annotation SummarizationSetBy = Automatic
+
+	column tower
+		dataType: string
+		lineageTag: 4d21b7c9-d5b8-4b7b-9560-fa064f79f565
+		summarizeBy: none
+		sourceColumn: tower
+
+		annotation SummarizationSetBy = Automatic
+
+	column hire_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 58eab41d-0df7-4e3c-beef-fe82e678d48a
+		summarizeBy: none
+		sourceColumn: hire_date
+
+		variation Variação
+			isDefault
+			relationship: 39d72b2a-efd6-4e59-b1ed-d9f5e9fb5afa
+			defaultHierarchy: LocalDateTable_9de09fe7-a72e-46d7-be08-64c32c7c9ac2.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition d_agents = m
+		mode: import
+		queryGroup: dimensoes
+		source =
+				let
+				    Fonte = GoogleBigQuery.Database(),
+				
+				    Projeto = Fonte{
+				        [Name = "planflow-512014"]
+				    }[Data],
+				
+				    ConsultaSQL = Value.NativeQuery(
+				        Projeto,
+				        "
+				        SELECT
+				          agent_id,
+				          agent_name,
+				          agent_email,
+				          tower,
+				          CAST(hire_date AS DATE) AS hire_date
+				        FROM `planflow-512014.planflow_raw.dim_agentes`
+				        ",
+				        null,
+				        [EnableFolding = true]
+				    )
+				in
+				    ConsultaSQL
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

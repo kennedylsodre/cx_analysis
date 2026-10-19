@@ -1,0 +1,53 @@
+table 'Indicadores Gráfico Menor'
+	lineageTag: 7e8f7af6-480f-4b6d-823a-b1af461a75fe
+
+	column Parâmetro
+		lineageTag: 8bfe48f4-1b43-407b-9657-259762ef16d3
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Parâmetro Pedido'
+
+		relatedColumnDetails
+			groupByColumn: 'Parâmetro Campos'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parâmetro Campos'
+		isHidden
+		lineageTag: 9bd693b6-66f7-4ffa-9c89-30e00b2f1583
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Parâmetro Pedido'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parâmetro Pedido'
+		isHidden
+		formatString: 0
+		lineageTag: d282e4d4-591c-447f-a0d3-352c2f0d0e26
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Indicadores Gráfico Menor' = calculated
+		mode: import
+		source =
+				{
+				    ("CSAT %", NAMEOF('_measures'[CSAT %]), 0),
+				    ("Qtd. Tickets", NAMEOF('_measures'[Qtd. Tickets]), 1),
+				    ("Taxa de resposta", NAMEOF('_measures'[Taxa de resposta]), 2),
+				    ("Tickets Escalados %", NAMEOF('_measures'[Tickets Escalados %]), 3),
+				    ("Tickets/agente/dia", NAMEOF('_measures'[Tickets por agente por dia]), 4),
+				    ("TMA Médio", NAMEOF('_measures'[TMA Médio]), 5),
+				    ("Qualidade", NAMEOF('_measures'[Qualidade Média]), 5)
+				}
+
+	annotation PBI_Id = b25ec8b8e8fb4efe87fc210d2c0e29cf
+

@@ -1,0 +1,123 @@
+table f_quality
+	lineageTag: b810deb5-5441-49b0-b5a2-bf246312244c
+
+	column quality_id
+		dataType: string
+		lineageTag: 2924e37a-ab53-40f8-b719-a9ab1c874836
+		summarizeBy: none
+		sourceColumn: quality_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column ticket_id
+		dataType: string
+		lineageTag: ed116cb0-4394-4ebe-91f8-24e350ebbc74
+		summarizeBy: none
+		sourceColumn: ticket_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column ticket_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 6321db5a-d4eb-4fc9-9c14-c892659a67ff
+		summarizeBy: none
+		sourceColumn: ticket_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column agent_id
+		dataType: string
+		lineageTag: c858b362-fbe5-4cf5-8feb-cd9e0741c33e
+		summarizeBy: none
+		sourceColumn: agent_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column quality_score
+		dataType: double
+		lineageTag: cf7d49ce-6b99-4f15-9032-58f6f47d06c1
+		summarizeBy: sum
+		sourceColumn: quality_score
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column monitor_type
+		dataType: string
+		lineageTag: ac6a3061-9c79-449b-9fc8-0013d1bd6af5
+		summarizeBy: none
+		sourceColumn: monitor_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column leader_id
+		dataType: string
+		lineageTag: f58e9b2c-d8e3-4b1b-968e-572158c8c769
+		summarizeBy: none
+		sourceColumn: leader_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column csat_score
+		dataType: int64
+		formatString: 0
+		lineageTag: 665d1c2b-894c-4335-b384-4eb7dd5bcee8
+		summarizeBy: sum
+		sourceColumn: csat_score
+
+		annotation SummarizationSetBy = Automatic
+
+	partition f_quality = m
+		mode: import
+		queryGroup: fatos
+		source = ```
+				let
+				    Fonte = GoogleBigQuery.Database(),
+				
+				    Projeto = Fonte{
+				        [Name = "planflow-512014"]
+				    }[Data],
+				
+				    ConsultaSQL = Value.NativeQuery(
+				        Projeto,
+				        "
+				 with csat AS ( 
+				    SELECT 
+				      *
+				    FROM planflow-512014.planflow_raw.raw_csat
+				    where csat_score >= 1 and csat_score <= 5
+				    qualify row_number() over(partition by ticket_id order by response_datetime desc) = 1 
+				 )
+				
+				  SELECT
+				    quality_id,
+				    qualidade.ticket_id,
+				    CAST(qualidade.ticket_date AS DATE) AS ticket_date,
+				    qualidade.agent_id,
+				    quality_score,
+				    monitor_type,
+				    leader_id,
+				    csat.csat_score
+				  FROM planflow-512014.planflow_raw.raw_qualidade qualidade
+				  LEFT JOIN csat 
+				    on qualidade.ticket_id = csat.ticket_id
+				  LEFT JOIN planflow-512014.planflow_raw.historico_lideranca hst 
+				  on hst.agent_id = qualidade.agent_id 
+				  and cast(hst.valid_from as date) <= cast(qualidade.ticket_date as date) 
+				  and coalesce(cast(valid_to as date), date(9999,12,31)) >= cast(qualidade.ticket_date as date)
+				        ",
+				        null,
+				        [EnableFolding = true]
+				    )
+				in
+				    ConsultaSQL
+				```
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

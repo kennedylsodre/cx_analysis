@@ -1,0 +1,228 @@
+table f_tickets
+	lineageTag: a2652b5a-5ee1-498c-8c98-20241bed6615
+
+	column ticket_id
+		dataType: string
+		lineageTag: 6f189052-a20c-42cf-9fdb-02d12176de5d
+		summarizeBy: none
+		sourceColumn: ticket_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column ticket_date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: f4ab20c0-098a-43dd-933b-38cd8b4a2dd9
+		summarizeBy: none
+		sourceColumn: ticket_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column agent_id
+		dataType: string
+		lineageTag: 30381c0d-4058-44b8-8c01-3ac22a426b65
+		summarizeBy: none
+		sourceColumn: agent_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_id
+		dataType: string
+		lineageTag: 75a0508b-4036-4f8f-aa03-a46c5c6d0edc
+		summarizeBy: none
+		sourceColumn: customer_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column channel
+		dataType: string
+		lineageTag: c5fd7f1e-3b65-4256-bd4b-8f78ddfa7066
+		summarizeBy: none
+		sourceColumn: channel
+
+		annotation SummarizationSetBy = Automatic
+
+	column contact_reason
+		dataType: string
+		lineageTag: d0c753ac-d5f1-4687-aa84-b64804e1de4e
+		summarizeBy: none
+		sourceColumn: contact_reason
+
+		annotation SummarizationSetBy = Automatic
+
+	column tma_minutes
+		dataType: double
+		lineageTag: 16584fb3-5846-46b5-959d-2d129fddb1b7
+		summarizeBy: sum
+		sourceColumn: tma_minutes
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column within_sla
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 1f1a8355-6587-4cc6-9256-508cff509a3a
+		summarizeBy: none
+		sourceColumn: within_sla
+
+		annotation SummarizationSetBy = Automatic
+
+	column reopened
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: a6e93fc9-f0b4-4efa-bc87-f47b2c45e619
+		summarizeBy: none
+		sourceColumn: reopened
+
+		annotation SummarizationSetBy = Automatic
+
+	column escalated
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: a766abe5-5d95-4248-9e73-b388b9cee427
+		summarizeBy: none
+		sourceColumn: escalated
+
+		annotation SummarizationSetBy = Automatic
+
+	column csat_score
+		dataType: int64
+		formatString: 0
+		lineageTag: 42394fd1-fd57-4d08-837e-9ebcba80c8c9
+		summarizeBy: sum
+		sourceColumn: csat_score
+
+		annotation SummarizationSetBy = Automatic
+
+	column response_datetime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 36ebf610-1e58-4b73-b155-49fc02b57eb1
+		summarizeBy: none
+		sourceColumn: response_datetime
+
+		variation Variação
+			isDefault
+			relationship: c8a76c61-046f-419c-8f09-89337c6367e3
+			defaultHierarchy: LocalDateTable_19c71c57-4031-488f-a6bf-931ad124261d.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column fl_csat_percentual
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: cfd8ff93-92a7-4362-8c7d-fa201c92c211
+		summarizeBy: none
+		sourceColumn: fl_csat_percentual
+
+		annotation SummarizationSetBy = Automatic
+
+	column sla_reposta
+		dataType: int64
+		formatString: 0
+		lineageTag: 44426206-3dc3-47a9-af57-af53736dda57
+		summarizeBy: sum
+		sourceColumn: sla_reposta
+
+		annotation SummarizationSetBy = Automatic
+
+	column fl_responded
+		dataType: int64
+		formatString: 0
+		lineageTag: fca3598e-e8d9-442b-97cb-49d3e802c7dc
+		summarizeBy: sum
+		sourceColumn: fl_responded
+
+		annotation SummarizationSetBy = Automatic
+
+	column leader_id
+		dataType: string
+		lineageTag: 66b10503-e169-4d43-930a-c1ef515f7ba3
+		summarizeBy: none
+		sourceColumn: leader_id
+
+		annotation SummarizationSetBy = Automatic
+
+	partition f_tickets = m
+		mode: import
+		queryGroup: fatos
+		source = ```
+				let
+				    Fonte = GoogleBigQuery.Database(),
+				
+				    Projeto = Fonte{
+				        [Name = "planflow-512014"]
+				    }[Data],
+				
+				    ConsultaSQL = Value.NativeQuery(
+				        Projeto,
+				        "
+				  with csat AS ( 
+				    SELECT 
+				      *
+				    FROM planflow-512014.planflow_raw.raw_csat
+				    where csat_score >= 1 and csat_score <= 5
+				    qualify row_number() over(partition by ticket_id order by response_datetime desc) = 1 
+				 ),
+				
+				 tickets as (
+				 
+				 SELECT DISTINCT
+				          ticket_id,
+				          CAST(ticket_date AS DATE) AS ticket_date,
+				          agent_id,
+				          customer_id,
+				          channel,
+				          contact_reason,
+				          tma_minutes,
+				          within_sla = 'Sim'        AS within_sla,
+				          reopened = 'Sim'          AS reopened,
+				          escalated = 'Sim'         AS escalated
+				  FROM `planflow-512014.planflow_raw.raw_tickets`
+				  WHERE tma_minutes < 999
+				 )
+				
+				
+				SELECT 
+				  tickets.*,
+				  csat.csat_score, 
+				  csat.response_datetime, 
+				  case when csat.csat_score is not null then 1 else 0 end as fl_responded,
+				  case 
+				    when csat_score >= 4 then TRUE
+				    when csat_score is not null and csat_score <4 then FALSE 
+				    else null
+				  end as fl_csat_percentual, 
+				  case 
+				    when csat_score is not null then date_diff( CAST(response_datetime AS DATE), CAST(tickets.ticket_date AS DATE),DAY) 
+				    else null 
+				  end as sla_reposta,
+				  leader_id 
+				FROM tickets
+				LEFT JOIN CSAT
+				  on tickets.ticket_id = CSAT.Ticket_Id
+				LEFT JOIN planflow-512014.planflow_raw.historico_lideranca hst 
+				  on hst.agent_id = tickets.agent_id 
+				  and cast(hst.valid_from as date) <= cast(tickets.ticket_date as date) 
+				  and coalesce(cast(valid_to as date), date(9999,12,31)) >= cast(tickets.ticket_date as date)
+				
+				
+				
+				
+				
+				        ",
+				        null,
+				        [EnableFolding = true]
+				    )
+				in
+				    ConsultaSQL
+				```
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

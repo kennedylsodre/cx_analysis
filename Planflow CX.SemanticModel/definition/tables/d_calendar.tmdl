@@ -1,0 +1,217 @@
+table d_calendar
+	lineageTag: 39bafa6a-8165-47da-b424-1f26fa013b7f
+
+	column Data
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 301c6bca-8b23-41e6-b2a0-6e55ba2fee93
+		summarizeBy: none
+		sourceColumn: Data
+
+		variation Variação
+			isDefault
+			relationship: 41b6747b-b371-4491-8966-ceb1c3a9a71f
+			defaultHierarchy: LocalDateTable_9587b73c-57ab-4a76-a206-7165c863eb2f.'Hierarquia de datas'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Ano
+		dataType: int64
+		formatString: 0
+		lineageTag: e68667b8-692d-412d-a984-70817184d923
+		summarizeBy: sum
+		sourceColumn: Ano
+
+		annotation SummarizationSetBy = Automatic
+
+	column Trimestre
+		dataType: string
+		lineageTag: 87b30127-4962-417a-bcbf-dd4353025f85
+		summarizeBy: none
+		sourceColumn: Trimestre
+
+		annotation SummarizationSetBy = Automatic
+
+	column MesNum
+		dataType: int64
+		formatString: 0
+		lineageTag: 153c3a9c-1a92-45b9-978d-baa269c18b1c
+		summarizeBy: sum
+		sourceColumn: MesNum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mes
+		dataType: string
+		lineageTag: 950e927d-aeb4-4e43-b1cb-4fdd99baf710
+		summarizeBy: none
+		sourceColumn: Mes
+
+		annotation SummarizationSetBy = Automatic
+
+	column MesAbrev
+		dataType: string
+		lineageTag: 531b1806-b026-43be-89c9-815d4fd87179
+		summarizeBy: none
+		sourceColumn: MesAbrev
+
+		annotation SummarizationSetBy = Automatic
+
+	column AnoMes
+		dataType: string
+		lineageTag: 323ed168-53b1-4f52-8ad6-7d9ab6005615
+		summarizeBy: none
+		sourceColumn: AnoMes
+
+		annotation SummarizationSetBy = Automatic
+
+	column AnoMesNum
+		dataType: int64
+		formatString: 0
+		lineageTag: 44e58056-3557-4b36-a8ad-7f5734c215a2
+		summarizeBy: sum
+		sourceColumn: AnoMesNum
+
+		annotation SummarizationSetBy = Automatic
+
+	column InicioMes
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: fb040e2c-7e4e-408e-aa0b-1d237fa3ae5e
+		summarizeBy: none
+		sourceColumn: InicioMes
+
+		variation Variação
+			isDefault
+			relationship: c14a433b-5ccf-4f73-9454-9aab3dd3f956
+			defaultHierarchy: LocalDateTable_aa6f7988-a6b7-4bf1-a1aa-5929187b18f9.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Semana
+		dataType: int64
+		formatString: 0
+		lineageTag: 5de5f36c-ae8d-45c6-9997-390e2d432d59
+		summarizeBy: sum
+		sourceColumn: Semana
+
+		annotation SummarizationSetBy = Automatic
+
+	column InicioSemana
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 70e99ab8-47c3-4ac3-940c-13181424491b
+		summarizeBy: none
+		sourceColumn: InicioSemana
+
+		variation Variação
+			isDefault
+			relationship: e021a753-0ad8-4520-8728-41c8eb5af809
+			defaultHierarchy: LocalDateTable_02157c8b-bc0a-4482-abaa-7c18d54ef968.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Dia
+		dataType: int64
+		formatString: 0
+		lineageTag: caad9097-02a3-4e54-8df8-48c5143d911f
+		summarizeBy: sum
+		sourceColumn: Dia
+
+		annotation SummarizationSetBy = Automatic
+
+	column DiaSemanaNum
+		dataType: int64
+		formatString: 0
+		lineageTag: a776e6bf-84c1-4eb7-8bd8-9de65070f885
+		summarizeBy: sum
+		sourceColumn: DiaSemanaNum
+
+		annotation SummarizationSetBy = Automatic
+
+	column DiaSemana
+		dataType: string
+		lineageTag: f5a892be-2a4e-4763-bb62-534f0764c270
+		summarizeBy: none
+		sourceColumn: DiaSemana
+
+		annotation SummarizationSetBy = Automatic
+
+	column DiaUtil
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 8fe93db0-9b9a-475a-806f-d3c32803a730
+		summarizeBy: none
+		sourceColumn: DiaUtil
+
+		annotation SummarizationSetBy = Automatic
+
+	partition d_calendar = m
+		mode: import
+		queryGroup: dimensoes
+		source =
+				let
+				    // Período do calendário: da data mais antiga à mais recente da consulta fato_tickets
+				    DataInicio = Date.From(List.Min(f_tickets[ticket_date])),
+				    DataFim = Date.From(List.Max(f_tickets[ticket_date])),
+				
+				    Datas = List.Dates(
+				        DataInicio,
+				        Duration.Days(DataFim - DataInicio) + 1,
+				        #duration(1, 0, 0, 0)
+				    ),
+				
+				    Tabela = Table.FromList(Datas, Splitter.SplitByNothing(), type table [Data = date]),
+				
+				    Calendario = Table.AddColumn(Tabela, "Info", each
+				        let
+				            d = [Data],
+				            NumDia = Date.DayOfWeek(d, Day.Monday) + 1
+				        in
+				            [
+				                Ano = Date.Year(d),
+				                Trimestre = "T" & Text.From(Date.QuarterOfYear(d)),
+				                MesNum = Date.Month(d),
+				                Mes = Text.Proper(Date.ToText(d, [Format = "MMMM", Culture = "pt-BR"])),
+				                MesAbrev = Text.Proper(Date.ToText(d, [Format = "MMM", Culture = "pt-BR"])),
+				                AnoMes = Date.ToText(d, [Format = "yyyy-MM"]),
+				                AnoMesNum = Date.Year(d) * 100 + Date.Month(d),
+				                InicioMes = Date.StartOfMonth(d),
+				                Semana = Date.WeekOfYear(d, Day.Monday),
+				                InicioSemana = Date.StartOfWeek(d, Day.Monday),
+				                Dia = Date.Day(d),
+				                DiaSemanaNum = NumDia,
+				                DiaSemana = Text.Proper(Date.ToText(d, [Format = "dddd", Culture = "pt-BR"])),
+				                DiaUtil = NumDia <= 5
+				            ]
+				    ),
+				
+				    Expandido = Table.ExpandRecordColumn(
+				        Calendario,
+				        "Info",
+				        {"Ano", "Trimestre", "MesNum", "Mes", "MesAbrev", "AnoMes", "AnoMesNum",
+				         "InicioMes", "Semana", "InicioSemana", "Dia", "DiaSemanaNum", "DiaSemana", "DiaUtil"}
+				    ),
+				
+				    Tipado = Table.TransformColumnTypes(Expandido, {
+				        {"Ano", Int64.Type}, {"Trimestre", type text}, {"MesNum", Int64.Type},
+				        {"Mes", type text}, {"MesAbrev", type text}, {"AnoMes", type text},
+				        {"AnoMesNum", Int64.Type}, {"InicioMes", type date}, {"Semana", Int64.Type},
+				        {"InicioSemana", type date}, {"Dia", Int64.Type}, {"DiaSemanaNum", Int64.Type},
+				        {"DiaSemana", type text}, {"DiaUtil", type logical}
+				    })
+				in
+				    Tipado
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

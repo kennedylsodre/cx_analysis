@@ -1,0 +1,20 @@
+[project]
+name = "cx-analysis"
+version = "0.1.0"
+description = "Carga do Base_Case_PlanFlow.xlsx no BigQuery"
+authors = [
+    {name = "kennedylsodre",email = "klacerda88@gmail.com"}
+]
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "python-dotenv (>=1.2.2,<2.0.0)",
+    "google-cloud-bigquery (>=3.42.2,<4.0.0)",
+    "pandas (>=2.2,<3.0)",
+    "openpyxl (>=3.1,<4.0)",
+    "pyarrow (>=15)",
+    "db-dtypes (>=1.2,<2.0)",
+    "pandas-gbq (>=0.26.1)"
+]
+
+[tool.poetry]
+package-mode = false

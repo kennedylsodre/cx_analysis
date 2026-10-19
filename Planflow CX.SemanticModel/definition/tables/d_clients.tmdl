@@ -1,0 +1,75 @@
+table d_clients
+	lineageTag: f38e374e-7d66-4b8b-82ce-3557f34c504f
+
+	column customer_id
+		dataType: string
+		lineageTag: 8e931df2-3088-4919-aa81-c16a1ad62ddb
+		summarizeBy: none
+		sourceColumn: customer_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_name
+		dataType: string
+		lineageTag: d6facb68-2bbc-4a12-ae7f-6cccbe08bce1
+		summarizeBy: none
+		sourceColumn: customer_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_segment
+		dataType: string
+		lineageTag: 6c9101a9-05ee-4480-97f1-0a36e203f3cd
+		summarizeBy: none
+		sourceColumn: customer_segment
+
+		annotation SummarizationSetBy = Automatic
+
+	column plan
+		dataType: string
+		lineageTag: dd1aae33-e9fc-427d-a0a4-2acac06c892b
+		summarizeBy: none
+		sourceColumn: plan
+
+		annotation SummarizationSetBy = Automatic
+
+	column industry
+		dataType: string
+		lineageTag: dc936283-c81b-4c7f-8d5b-f4f6ce35dad7
+		summarizeBy: none
+		sourceColumn: industry
+
+		annotation SummarizationSetBy = Automatic
+
+	partition d_clients = m
+		mode: import
+		queryGroup: dimensoes
+		source =
+				let
+				    Fonte = GoogleBigQuery.Database(),
+				
+				    Projeto = Fonte{
+				        [Name = "planflow-512014"]
+				    }[Data],
+				
+				    ConsultaSQL = Value.NativeQuery(
+				        Projeto,
+				        "
+				        SELECT
+				          customer_id,
+				          customer_name,
+				          customer_segment,
+				          plan,
+				          industry
+				        FROM `planflow-512014.planflow_raw.dim_clientes`
+				        ",
+				        null,
+				        [EnableFolding = true]
+				    )
+				in
+				    ConsultaSQL
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

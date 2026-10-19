@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Planflow CX"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "87de55c0-a001-43a9-b448-d4b4594b08ce"
+  }
+}

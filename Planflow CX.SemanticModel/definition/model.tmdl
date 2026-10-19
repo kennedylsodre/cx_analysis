@@ -1,0 +1,44 @@
+model Model
+	culture: pt-BR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: pt-BR
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+queryGroup dimensoes
+
+	annotation PBI_QueryGroupOrder = 0
+
+queryGroup fatos
+
+	annotation PBI_QueryGroupOrder = 1
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["d_leader","d_agents","d_hst_leader","d_calendar","d_clients","f_tickets","f_sla_daily","f_quality","f_absenteeism","f_csat","_measures"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table d_leader
+ref table d_agents
+ref table DateTableTemplate_295b24e2-440d-4c2c-8fe6-45765e328796
+ref table LocalDateTable_9de09fe7-a72e-46d7-be08-64c32c7c9ac2
+ref table d_calendar
+ref table LocalDateTable_9587b73c-57ab-4a76-a206-7165c863eb2f
+ref table LocalDateTable_aa6f7988-a6b7-4bf1-a1aa-5929187b18f9
+ref table LocalDateTable_02157c8b-bc0a-4482-abaa-7c18d54ef968
+ref table d_clients
+ref table f_tickets
+ref table f_sla_daily
+ref table f_quality
+ref table f_absenteeism
+ref table _measures
+ref table LocalDateTable_19c71c57-4031-488f-a6bf-931ad124261d
+ref table 'Eixos de Análise'
+ref table 'Indicadores Gráfico Menor'
+ref table Parâmetro
+
+ref cultureInfo pt-BR
+

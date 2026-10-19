@@ -1,0 +1,489 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "1b89064c8562c9d4c934",
+  "position": {
+    "x": 38.333333333333336,
+    "y": 1628.3333333333335,
+    "z": 10001,
+    "height": 830,
+    "width": 1826.6666666666667,
+    "tabOrder": 10001
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "d_agents"
+                    }
+                  },
+                  "Property": "tower"
+                }
+              },
+              "queryRef": "d_agents.tower",
+              "nativeQueryRef": "Torre",
+              "active": true,
+              "displayName": "Torre"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "d_clients"
+                    }
+                  },
+                  "Property": "customer_segment"
+                }
+              },
+              "queryRef": "d_clients.customer_segment",
+              "nativeQueryRef": "customer_segment",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "d_agents"
+                    }
+                  },
+                  "Property": "agent_name"
+                }
+              },
+              "queryRef": "d_agents.agent_name",
+              "nativeQueryRef": "agent_name",
+              "active": false
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_measures"
+                    }
+                  },
+                  "Property": "Qtd. Tickets"
+                }
+              },
+              "queryRef": "_measures.Qtd. Tickets",
+              "nativeQueryRef": "Qtd. Tickets"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_measures"
+                    }
+                  },
+                  "Property": "Qtd. Agents"
+                }
+              },
+              "queryRef": "_measures.Qtd. Agents",
+              "nativeQueryRef": "Qtd. Agents"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_measures"
+                    }
+                  },
+                  "Property": "Tickets por agente por dia"
+                }
+              },
+              "queryRef": "_measures.Tickets por agents",
+              "nativeQueryRef": "Tickets por agente por dia"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_measures"
+                    }
+                  },
+                  "Property": "Nota Média CSTA"
+                }
+              },
+              "queryRef": "_measures.Nota Média CSTA",
+              "nativeQueryRef": "Nota Média CSAT",
+              "displayName": "Nota Média CSAT"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_measures"
+                    }
+                  },
+                  "Property": "TMA Médio"
+                }
+              },
+              "queryRef": "_measures.TMA Médio",
+              "nativeQueryRef": "TMA Médio"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_measures"
+                    }
+                  },
+                  "Property": "CSAT %"
+                }
+              },
+              "queryRef": "_measures.CSAT %",
+              "nativeQueryRef": "CSAT %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_measures"
+                    }
+                  },
+                  "Property": "Taxa de resposta"
+                }
+              },
+              "queryRef": "_measures.Taxa de resposta",
+              "nativeQueryRef": "Taxa de resposta"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_measures"
+                    }
+                  },
+                  "Property": "Tickets Escalados"
+                }
+              },
+              "queryRef": "_measures.Tickets Escalados",
+              "nativeQueryRef": "Tickets Escalados"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_measures"
+                    }
+                  },
+                  "Property": "Tickets Escalados %"
+                }
+              },
+              "queryRef": "_measures.Tickets Escalados %",
+              "nativeQueryRef": "Tickets Escalados %"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "_measures"
+                  }
+                },
+                "Property": "Qtd. Tickets"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "expansionStates": [
+      {
+        "roles": [
+          "Rows"
+        ],
+        "levels": [
+          {
+            "queryRefs": [
+              "d_agents.tower"
+            ],
+            "isCollapsed": true,
+            "identityKeys": [
+              {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "d_agents"
+                    }
+                  },
+                  "Property": "tower"
+                }
+              }
+            ],
+            "isPinned": true
+          },
+          {
+            "queryRefs": [
+              "d_clients.customer_segment"
+            ],
+            "isCollapsed": true,
+            "isPinned": true
+          },
+          {
+            "queryRefs": [
+              "d_agents.agent_name"
+            ],
+            "isCollapsed": true
+          }
+        ],
+        "root": {
+          "children": [
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "'Financeiro & Contratos'"
+                  }
+                }
+              ],
+              "isToggled": true
+            }
+          ]
+        }
+      }
+    ],
+    "objects": {
+      "values": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "14D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnHeaders": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "14D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            },
+            "backColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 2,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "rowHeaders": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "14D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Left'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "188.77013762926686D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_measures.Tickets Escalados %"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "148.43191672604559D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_measures.Tickets Escalados"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "143.66669955796775D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_measures.Taxa de resposta"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "164.67629602480827D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_measures.CSAT %"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "128.09051572081577D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_measures.Nota Média CSTA"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "176.33331402437733D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_measures.Qtd. Tickets"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "396.62818515203935D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "d_agents.tower"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "174.33706935016482D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_measures.Tickets por agents"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "140.666654845387D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_measures.Qtd. Agents"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "106D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_measures.TMA Médio"
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

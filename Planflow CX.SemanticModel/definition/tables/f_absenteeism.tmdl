@@ -1,0 +1,85 @@
+table f_absenteeism
+	lineageTag: 872196b2-3349-4dd5-9df8-31d85648a6c8
+
+	column date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: cd637012-0e05-4129-a1c5-b23bfffdd117
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column agent_id
+		dataType: string
+		lineageTag: 6fb3de41-ffbe-4ca6-ba39-3224a8a853ed
+		summarizeBy: none
+		sourceColumn: agent_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column attendance_status
+		dataType: string
+		lineageTag: 21d7871f-0c87-46e9-9d18-b6d9c5b0f4e0
+		summarizeBy: none
+		sourceColumn: attendance_status
+
+		annotation SummarizationSetBy = Automatic
+
+	column scheduled_hours
+		dataType: double
+		lineageTag: 1963bfe0-12e7-4f46-8619-24402ea8170d
+		summarizeBy: sum
+		sourceColumn: scheduled_hours
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column leader_id
+		dataType: string
+		lineageTag: da5f4f36-5b8a-4f95-bfb2-73707932a45e
+		summarizeBy: none
+		sourceColumn: leader_id
+
+		annotation SummarizationSetBy = Automatic
+
+	partition f_absenteeism = m
+		mode: import
+		queryGroup: fatos
+		source = ```
+				let
+				    Fonte = GoogleBigQuery.Database(),
+				
+				    Projeto = Fonte{
+				        [Name = "planflow-512014"]
+				    }[Data],
+				
+				    ConsultaSQL = Value.NativeQuery(
+				        Projeto,
+				        "
+				        SELECT
+				    CAST(date AS DATE) AS date,
+				    absenteismo.agent_id,
+				    attendance_status,
+				    scheduled_hours,
+				    leader_id
+				  FROM planflow-512014.planflow_raw.raw_absenteismo absenteismo
+				  LEFT JOIN planflow-512014.planflow_raw.historico_lideranca hst 
+				  on hst.agent_id = absenteismo.agent_id 
+				  and cast(hst.valid_from as date) <= cast(absenteismo.date as date) 
+				  and coalesce(cast(valid_to as date), date(9999,12,31)) >= cast(absenteismo.date as date)
+				        ",
+				        null,
+				        [EnableFolding = true]
+				    )
+				in
+				    ConsultaSQL
+				```
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

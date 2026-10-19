@@ -1,0 +1,87 @@
+table f_sla_daily
+	lineageTag: 487c071e-a1e5-4af4-b1bf-2de2b118cffe
+
+	column date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 8c7aae5e-b2f3-47f0-b8eb-5ac3b42cb1d5
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column agent_id
+		dataType: string
+		lineageTag: 745c220a-6dc4-4a3e-b369-b619bbe995d2
+		summarizeBy: none
+		sourceColumn: agent_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column scheduled_hours
+		dataType: double
+		lineageTag: f8ee418b-10b1-4f28-9d33-1f29bf1a67c7
+		summarizeBy: sum
+		sourceColumn: scheduled_hours
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column adherence
+		dataType: double
+		lineageTag: 854f3b69-f5a4-4bab-85d7-0235937abfcf
+		summarizeBy: sum
+		sourceColumn: adherence
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column leader_id
+		dataType: string
+		lineageTag: 4f5e2161-d3e1-4985-a1d8-cd8b2c6b1684
+		summarizeBy: none
+		sourceColumn: leader_id
+
+		annotation SummarizationSetBy = Automatic
+
+	partition f_sla_daily = m
+		mode: import
+		queryGroup: fatos
+		source = ```
+				let
+				    Fonte = GoogleBigQuery.Database(),
+				
+				    Projeto = Fonte{
+				        [Name = "planflow-512014"]
+				    }[Data],
+				
+				    ConsultaSQL = Value.NativeQuery(
+				        Projeto,
+				        "
+				         SELECT
+				    CAST(date AS DATE)                              AS date,
+				    sla.agent_id,
+				    scheduled_hours,
+				    CAST(REPLACE(adherence, ',', '.') AS FLOAT64)   AS adherence,
+				    leader_id
+				  FROM planflow-512014.planflow_raw.raw_sla_diario sla 
+				  LEFT JOIN planflow-512014.planflow_raw.historico_lideranca hst 
+				  on hst.agent_id = sla.agent_id 
+				  and cast(hst.valid_from as date) <= cast(sla.date as date) 
+				  and coalesce(cast(valid_to as date), date(9999,12,31)) >= cast(sla.date as date)
+				        ",
+				        null,
+				        [EnableFolding = true]
+				    )
+				in
+				    ConsultaSQL
+				```
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

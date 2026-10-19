@@ -1,0 +1,53 @@
+table Parâmetro
+	lineageTag: 0a6ebc70-9863-4db5-b4a0-73f959c8c5ca
+
+	column Parâmetro
+		lineageTag: a5229ffe-d480-4972-8a2e-62c2418371aa
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Parâmetro Pedido'
+
+		relatedColumnDetails
+			groupByColumn: 'Parâmetro Campos'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parâmetro Campos'
+		isHidden
+		lineageTag: c4059c92-3ce4-4f7b-947e-af798750ee7b
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Parâmetro Pedido'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parâmetro Pedido'
+		isHidden
+		formatString: 0
+		lineageTag: c6a7b296-85e3-4c36-b04c-935e914d9b0d
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Parâmetro = calculated
+		mode: import
+		source =
+				{
+				        ("CSAT %", NAMEOF('_measures'[CSAT %]), 0),
+				    ("Qtd. Tickets", NAMEOF('_measures'[Qtd. Tickets]), 1),
+				    ("Taxa de resposta", NAMEOF('_measures'[Taxa de resposta]), 2),
+				    ("Tickets Escalados %", NAMEOF('_measures'[Tickets Escalados %]), 3),
+				    ("Tickets/agente/dia", NAMEOF('_measures'[Tickets por agente por dia]), 4),
+				    ("TMA Médio", NAMEOF('_measures'[TMA Médio]), 5),
+				    ("Qualidade", NAMEOF('_measures'[Qualidade Média]), 5)
+				}
+
+	annotation PBI_Id = 76cdf58f19a24e3f80d738de76661143
+

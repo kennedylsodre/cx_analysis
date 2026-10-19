@@ -1,0 +1,20 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "2a55f9efed82947163d2",
+  "displayName": "Líderes",
+  "displayOption": "ActualSize",
+  "height": 2500,
+  "width": 1920,
+  "visualInteractions": [
+    {
+      "source": "9bb9adc28f4e5eb735a0",
+      "target": "1fda97fc6d47ced10cb4",
+      "type": "DataFilter"
+    },
+    {
+      "source": "9bb9adc28f4e5eb735a0",
+      "target": "e27e3a1f6601c9f35876",
+      "type": "DataFilter"
+    }
+  ]
+}

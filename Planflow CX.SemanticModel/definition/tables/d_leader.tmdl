@@ -1,0 +1,57 @@
+table d_leader
+	lineageTag: c12702b7-9fa9-460e-a38a-e72fde5d4d0a
+
+	column leader_id
+		dataType: string
+		lineageTag: a80fadf9-0ac6-49e8-80f7-5a17417e6dc6
+		summarizeBy: none
+		sourceColumn: leader_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column leader_name
+		dataType: string
+		lineageTag: 2b21310a-80da-4186-bf52-b2c2b270b5d5
+		summarizeBy: none
+		sourceColumn: leader_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column leader_email
+		dataType: string
+		lineageTag: df70f88d-ccad-4a6d-9b30-3f81392462f0
+		summarizeBy: none
+		sourceColumn: leader_email
+
+		annotation SummarizationSetBy = Automatic
+
+	partition d_leader = m
+		mode: import
+		queryGroup: dimensoes
+		source =
+				let
+				    Fonte = GoogleBigQuery.Database(),
+				
+				    Projeto = Fonte{
+				        [Name = "planflow-512014"]
+				    }[Data],
+				
+				    ConsultaSQL = Value.NativeQuery(
+				        Projeto,
+				        "
+				       SELECT
+				            leader_id,
+				            leader_name,
+				            leader_email
+				        FROM `planflow-512014.planflow_raw.dim_lideres`
+				        ",
+				        null,
+				        [EnableFolding = true]
+				    )
+				in
+				    ConsultaSQL
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

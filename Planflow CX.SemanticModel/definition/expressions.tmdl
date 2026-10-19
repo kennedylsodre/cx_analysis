@@ -1,0 +1,63 @@
+expression d_hst_leader =
+		let
+		    Fonte = GoogleBigQuery.Database(),
+		
+		    Projeto = Fonte{
+		        [Name = "planflow-512014"]
+		    }[Data],
+		
+		    ConsultaSQL = Value.NativeQuery(
+		        Projeto,
+		        "
+		        SELECT
+		          agent_id,
+		          leader_id,
+		          CAST(valid_from AS DATE) AS valid_from,
+		          CAST(valid_to AS DATE)   AS valid_to
+		        FROM `planflow-512014.planflow_raw.historico_lideranca`
+		        ",
+		        null,
+		        [EnableFolding = true]
+		    )
+		in
+		    ConsultaSQL
+	lineageTag: 3b3e3f61-3fd1-45d1-8115-9c1bb0e081cb
+	queryGroup: dimensoes
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
+expression f_csat =
+		let
+		    Fonte = GoogleBigQuery.Database(),
+		
+		    Projeto = Fonte{
+		        [Name = "planflow-512014"]
+		    }[Data],
+		
+		    ConsultaSQL = Value.NativeQuery(
+		        Projeto,
+		        "
+		        SELECT
+		          ticket_id,
+		          CAST(ticket_date AS DATE) AS ticket_date,
+		          agent_id,
+		          channel,
+		          csat_score,
+		          survey_sent = 'Sim'       AS survey_sent,
+		          response_datetime
+		        FROM `planflow-512014.planflow_raw.raw_csat`
+		        ",
+		        null,
+		        [EnableFolding = true]
+		    )
+		in
+		    ConsultaSQL
+	lineageTag: e7469981-d1ce-4cd4-91f6-5747d5ddfc33
+	queryGroup: fatos
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
